@@ -1,8 +1,8 @@
-import { usePlayerStore } from '../store/usePlayerStore'
+import { useAppStore } from '../store/useAppStore';
 
 export function PlayerList() {
-  const players = usePlayerStore((state) => state.players)
-  const removePlayer = usePlayerStore((state) => state.removePlayer)
+  const players = useAppStore((state) => state.players)
+  const removePlayer = useAppStore((state) => state.removePlayer)
 
   if (players.length === 0) {
     return <p>Nenhum jogador cadastrado ainda.</p>

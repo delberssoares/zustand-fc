@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { usePlayerStore } from '../store/usePlayerStore'
+import { useAppStore } from '../store/useAppStore';
 import type { Position } from '../types/Player'
 
 const positions: Position[] = ['Goleiro', 'Zagueiro', 'Meio-campo', 'Atacante']
 
 export function PlayerForm() {
-  const addPlayer = usePlayerStore((state) => state.addPlayer)
+  const addPlayer = useAppStore((state) => state.addPlayer)
 
   const [name, setName] = useState('')
   const [position, setPosition] = useState<Position>('Atacante')
