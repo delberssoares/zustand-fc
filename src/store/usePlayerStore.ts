@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { devtools, persist } from 'zustand/middleware';
 import type { Player } from '../types/Player';
 
 interface PlayerState {
@@ -10,29 +10,46 @@ interface PlayerState {
 }
 
 export const usePlayerStore = create<PlayerState>()(
-  persist(
-    (set) => ({
-      players: [],
+  devtools(
+    persist(
+      (set) => ({
+        players: [],
 
-      addPlayer: (player) =>
-        set((state) => ({
-          players: [...state.players, { ...player, id: crypto.randomUUID() }],
-        })),
-
-      removePlayer: (id) =>
-        set((state) => ({
-          players: state.players.filter((p) => p.id !== id),
-        })),
-
-      updatePlayer: (id, data) =>
-        set((state) => ({
-          players: state.players.map((p) =>
-            p.id === id ? { ...p, ...data } : p
+        addPlayer: (player) =>
+          set(
+            (state) => ({
+              players: [...state.players, { ...player, id: crypto.randomUUID() }],
+            }),
+            false,
+            'players/add'
           ),
-        })),
-    }),
+
+        removePlayer: (id) =>
+          set(
+            (state) => ({
+              players: state.players.filter((p) => p.id !== id),
+            }),
+            false,
+            'players/remove'
+          ),
+
+        updatePlayer: (id, data) =>
+          set(
+            (state) => ({
+              players: state.players.map((p) =>
+                p.id === id ? { ...p, ...data } : p
+              ),
+            }),
+            false,
+            'players/update'
+          ),
+      }),
+      {
+        name: 'zustand-fc:players',
+      }
+    ),
     {
-      name: 'zustand-fc:players',
+      name: 'PlayerStore',
     }
   )
 )
