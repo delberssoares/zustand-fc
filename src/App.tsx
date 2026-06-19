@@ -1,18 +1,12 @@
-import { useCounterStore } from './store/useCounterStore'
+import { PlayerForm } from './components/PlayerForm'
+import { PlayerList } from './components/PlayerList'
 
 function App() {
-  const count = useCounterStore((state) => state.count)
-  const increment = useCounterStore((state) => state.increment)
-  const decrement = useCounterStore((state) => state.decrement)
-  const reset = useCounterStore((state) => state.reset)
-
   return (
-    <div style={{ textAlign: 'center', marginTop: '4rem' }}>
+    <div style={{ maxWidth: 500, margin: '4rem auto', fontFamily: 'sans-serif' }}>
       <h1>Zustand FC ⚽</h1>
-      <p>Jogadores cadastrados: {count}</p>
-      <button onClick={increment}>+</button>
-      <button onClick={decrement}>-</button>
-      <button onClick={reset}>Reset</button>
+      <PlayerForm />
+      <PlayerList />
     </div>
   )
 }
