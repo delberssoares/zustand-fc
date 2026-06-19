@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import type { Player } from '../types/Player';
 
 interface PlayerState {
@@ -8,23 +9,30 @@ interface PlayerState {
   updatePlayer: (id: string, data: Partial<Omit<Player, 'id'>>) => void
 }
 
-export const usePlayerStore = create<PlayerState>((set) => ({
-  players: [],
+export const usePlayerStore = create<PlayerState>()(
+  persist(
+    (set) => ({
+      players: [],
 
-  addPlayer: (player) =>
-    set((state) => ({
-      players: [...state.players, { ...player, id: crypto.randomUUID() }],
-    })),
+      addPlayer: (player) =>
+        set((state) => ({
+          players: [...state.players, { ...player, id: crypto.randomUUID() }],
+        })),
 
-  removePlayer: (id) =>
-    set((state) => ({
-      players: state.players.filter((p) => p.id !== id),
-    })),
+      removePlayer: (id) =>
+        set((state) => ({
+          players: state.players.filter((p) => p.id !== id),
+        })),
 
-  updatePlayer: (id, data) =>
-    set((state) => ({
-      players: state.players.map((p) =>
-        p.id === id ? { ...p, ...data } : p
-      ),
-    })),
-}))
+      updatePlayer: (id, data) =>
+        set((state) => ({
+          players: state.players.map((p) =>
+            p.id === id ? { ...p, ...data } : p
+          ),
+        })),
+    }),
+    {
+      name: 'zustand-fc:players',
+    }
+  )
+)
