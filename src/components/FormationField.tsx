@@ -1,27 +1,50 @@
+import { DndContext } from '@dnd-kit/core'
+import type { DragEndEvent } from '@dnd-kit/core'
 import { useAppStore } from '../store/useAppStore'
-
-const positionColors: Record<string, string> = {
-  'Goleiro': '#f59e0b',
-  'Zagueiro': '#3b82f6',
-  'Meio-campo': '#10b981',
-  'Atacante': '#ef4444',
-}
+import { DraggablePlayer } from './DraggablePlayer'
+import { DroppablePosition } from './DroppablePosition'
 
 export function FormationField() {
   const formations = useAppStore((state) => state.formations)
   const activeFormationId = useAppStore((state) => state.activeFormationId)
   const setActiveFormation = useAppStore((state) => state.setActiveFormation)
+  const assignPlayer = useAppStore((state) => state.assignPlayer)
   const unassignPlayer = useAppStore((state) => state.unassignPlayer)
   const players = useAppStore((state) => state.players)
 
   const activeFormation = formations.find((f) => f.id === activeFormationId)
+
+  // IDs de jogadores já alocados em alguma posição da formação ativa
+  const assignedPlayerIds = new Set(
+    activeFormation?.positions.map((p) => p.playerId).filter(Boolean)
+  )
+
+  // Só mostra jogadores que ainda não estão em nenhuma posição
+  const availablePlayers = players.filter((p) => !assignedPlayerIds.has(p.id))
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+
+    // active = o jogador que foi arrastado
+    // over = o slot onde ele foi solto (ou null se solto fora)
+    if (!over || !activeFormation) return
+
+    const playerId = active.id as string
+    const positionId = over.id as string
+
+    // Verifica se o slot já tem jogador — se sim, não faz nada
+    const targetPosition = activeFormation.positions.find((p) => p.id === positionId)
+    if (targetPosition?.playerId) return
+
+    assignPlayer(activeFormation.id, positionId, playerId)
+  }
 
   if (formations.length === 0) {
     return <p>Nenhuma formação criada ainda.</p>
   }
 
   return (
-    <div>
+    <DndContext onDragEnd={handleDragEnd}>
       {/* Seletor de formação ativa */}
       <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
         {formations.map((f) => (
@@ -42,68 +65,56 @@ export function FormationField() {
         ))}
       </div>
 
-      {/* Campo */}
       {activeFormation && (
-        <div
-          style={{
-            background: '#166534',
-            borderRadius: '8px',
-            padding: '1rem',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.5rem',
-          }}
-        >
-          <h3 style={{ color: 'white', margin: '0 0 0.5rem', textAlign: 'center' }}>
-            {activeFormation.name} — {activeFormation.type}
-          </h3>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {/* Campo */}
+          <div
+            style={{
+              background: '#166534',
+              borderRadius: '8px',
+              padding: '1rem',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.5rem',
+            }}
+          >
+            <h3 style={{ color: 'white', margin: '0 0 0.5rem', textAlign: 'center' }}>
+              {activeFormation.name} — {activeFormation.type}
+            </h3>
 
-          {activeFormation.positions.map((pos) => {
-            const player = players.find((p) => p.id === pos.playerId)
-            const color = positionColors[pos.position] ?? '#6b7280'
+            {activeFormation.positions.map((pos) => {
+              const player = players.find((p) => p.id === pos.playerId)
+              return (
+                <DroppablePosition
+                  key={pos.id}
+                  position={pos}
+                  player={player}
+                  formationId={activeFormation.id}
+                  onUnassign={(positionId) => unassignPlayer(activeFormation.id, positionId)}
+                />
+              )
+            })}
+          </div>
 
-            return (
-              <div
-                key={pos.id}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  background: 'rgba(0,0,0,0.3)',
-                  borderRadius: '6px',
-                  padding: '0.4rem 0.8rem',
-                  borderLeft: `4px solid ${color}`,
-                }}
-              >
-                <span style={{ color: '#d1fae5', fontSize: '0.85rem', minWidth: '100px' }}>
-                  {pos.label}
-                </span>
-
-                <span style={{ color: 'white', flex: 1, textAlign: 'center' }}>
-                  {player ? `${player.name} (⭐ ${player.rating})` : '— vazio —'}
-                </span>
-
-                {player && (
-                  <button
-                    onClick={() => unassignPlayer(activeFormation.id, pos.id)}
-                    style={{
-                      background: 'transparent',
-                      border: '1px solid #ef4444',
-                      color: '#ef4444',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                      padding: '0.2rem 0.5rem',
-                      fontSize: '0.75rem',
-                    }}
-                  >
-                    remover
-                  </button>
-                )}
+          {/* Elenco disponível pra arrastar */}
+          <div>
+            <h4 style={{ margin: '0 0 0.5rem' }}>
+              Jogadores disponíveis ({availablePlayers.length})
+            </h4>
+            {availablePlayers.length === 0 ? (
+              <p style={{ color: '#9ca3af', fontSize: '0.85rem' }}>
+                Todos os jogadores estão escalados.
+              </p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                {availablePlayers.map((player) => (
+                  <DraggablePlayer key={player.id} player={player} />
+                ))}
               </div>
-            )
-          })}
+            )}
+          </div>
         </div>
       )}
-    </div>
+    </DndContext>
   )
 }
