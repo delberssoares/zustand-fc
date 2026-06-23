@@ -6,3 +6,10 @@ export interface Player {
   position: Position
   rating: number
 }
+
+export interface FieldPosition {
+  id: string
+  label: string       
+  position: Position  
+  playerId: string | null
+}
