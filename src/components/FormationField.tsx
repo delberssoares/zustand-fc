@@ -3,6 +3,7 @@ import type { DragEndEvent } from '@dnd-kit/core'
 import { useAppStore } from '../store/useAppStore'
 import { DraggablePlayer } from './DraggablePlayer'
 import { DroppablePosition } from './DroppablePosition'
+import { FormationStatsPanel } from './FormationStatsPanel'
 
 export function FormationField() {
   const formations = useAppStore((state) => state.formations)
@@ -67,6 +68,7 @@ export function FormationField() {
 
       {activeFormation && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <FormationStatsPanel />
           {/* Campo */}
           <div
             style={{
