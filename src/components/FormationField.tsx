@@ -4,6 +4,7 @@ import { useAppStore } from '../store/useAppStore'
 import { DraggablePlayer } from './DraggablePlayer'
 import { DroppablePosition } from './DroppablePosition'
 import { FormationStatsPanel } from './FormationStatsPanel'
+import { UndoRedoControls } from './UndoRedoControls'
 
 export function FormationField() {
   const formations = useAppStore((state) => state.formations)
@@ -65,10 +66,12 @@ export function FormationField() {
           </button>
         ))}
       </div>
+      <UndoRedoControls />
+      <FormationStatsPanel />
 
       {activeFormation && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <FormationStatsPanel />
+          
           {/* Campo */}
           <div
             style={{
