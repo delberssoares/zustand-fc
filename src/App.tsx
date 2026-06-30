@@ -3,6 +3,7 @@ import { PlayerForm } from './components/PlayerForm'
 import { PlayerList } from './components/PlayerList'
 import { FormationForm } from './components/FormationForm'
 import { FormationField } from './components/FormationField'
+import { ImportPlayersButton } from './components/ImportPlayersButton'
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
 
       <section style={{ marginBottom: '2rem' }}>
         <h2>Elenco</h2>
+        <ImportPlayersButton />
         <PlayerForm />
         <PlayerList />
       </section>
