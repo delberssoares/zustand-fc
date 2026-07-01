@@ -4,6 +4,10 @@ Projeto de estudo focado em **gerenciamento de estado com Zustand** utilizando *
 
 O domínio da aplicação é um gerenciador de elenco e escalação de um time de futebol society. A ideia é manter uma aplicação simples o suficiente para estudar gerenciamento de estado, mas rica o bastante para explorar recursos avançados do Zustand utilizados em aplicações reais.
 
+## 🌐 Demo
+
+👉 **Teste o projeto:** https://zustand-fc.vercel.app/
+
 ---
 
 ## 📚 Objetivo
