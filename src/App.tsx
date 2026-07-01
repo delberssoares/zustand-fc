@@ -7,18 +7,18 @@ import { ImportPlayersButton } from './components/ImportPlayersButton'
 
 function App() {
   return (
-    <div style={{ maxWidth: 600, margin: '4rem auto', fontFamily: 'sans-serif' }}>
+    <div style={{ maxWidth: 640, margin: '0 auto', padding: '2rem 1rem' }}>
       <Header />
 
-      <section style={{ marginBottom: '2rem' }}>
-        <h2>Elenco</h2>
+      <section>
+        <h2>⚽ Elenco</h2>
         <ImportPlayersButton />
         <PlayerForm />
         <PlayerList />
       </section>
 
       <section>
-        <h2>Escalação</h2>
+        <h2>🗂 Escalação</h2>
         <FormationForm />
         <FormationField />
       </section>
